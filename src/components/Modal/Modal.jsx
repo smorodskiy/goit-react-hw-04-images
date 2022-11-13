@@ -10,30 +10,30 @@ import { ModalStyled, Overlay, Image } from './Modal.styled';
 const modalRef = document.querySelector('#modal-img');
 
 const Modal = ({ modalImg, tags, closeModal }) => {
-  const closeByEscape = e => {
-    if (e.code === 'Escape') {
-      handleOverlayClick();
-    }
-  };
-
   useEffect(() => {
+    function closeByEscape(e) {
+      if (e.code === 'Escape') {
+        closeModal();
+      }
+    }
+
     window.addEventListener('keydown', closeByEscape);
 
     return () => {
       window.removeEventListener('keydown', closeByEscape);
     };
-  }, []);
+  }, [closeModal]);
 
-  const handleOverlayClick = () => {
-    closeModal();
-  };
+  // function handleOverlayClick() {
+
+  // }
 
   const handleModalImg = e => {
     e.stopPropagation();
   };
 
   return createPortal(
-    <Overlay onClick={handleOverlayClick}>
+    <Overlay onClick={() => closeModal()}>
       <ModalStyled>
         <Image src={modalImg} alt={tags} onClick={handleModalImg} />
       </ModalStyled>
