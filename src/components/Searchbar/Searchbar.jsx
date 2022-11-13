@@ -1,5 +1,4 @@
-import React from 'react';
-import { Component } from 'react';
+import React, { useState } from 'react';
 
 // Check types of props
 import PropTypes from 'prop-types';
@@ -11,44 +10,39 @@ import {
   SearchInput,
 } from './Searchbar.styled';
 
-class Searchbar extends Component {
-  state = {
-    searchValue: '',
-  };
+const Searchbar = ({ onSubmit }) => {
+  const [searchValue, setSearchValue] = useState('');
 
   // On input change
-  handleOnInputChange = e => {
+  const handleOnInputChange = e => {
     const inputValue = e.target.value;
-    this.setState({ searchValue: inputValue });
+    setSearchValue(inputValue);
   };
 
   // Callback on submit form
-  handleSearchOnSubmit = e => {
+  const handleSearchOnSubmit = e => {
     e.preventDefault();
-    const { onSubmit } = this.props;
-    onSubmit(this.state.searchValue);
+    onSubmit(searchValue);
   };
 
-  render() {
-    return (
-      <SearchHeader>
-        <SearchForm onSubmit={this.handleSearchOnSubmit}>
-          <SearchButton type="submit">
-            <SearchButtonLabel>Search</SearchButtonLabel>
-          </SearchButton>
+  return (
+    <SearchHeader>
+      <SearchForm onSubmit={handleSearchOnSubmit}>
+        <SearchButton type="submit">
+          <SearchButtonLabel>Search</SearchButtonLabel>
+        </SearchButton>
 
-          <SearchInput
-            type="text"
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-            onChange={this.handleOnInputChange}
-          />
-        </SearchForm>
-      </SearchHeader>
-    );
-  }
-}
+        <SearchInput
+          type="text"
+          autoComplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+          onChange={handleOnInputChange}
+        />
+      </SearchForm>
+    </SearchHeader>
+  );
+};
 
 export { Searchbar };
 

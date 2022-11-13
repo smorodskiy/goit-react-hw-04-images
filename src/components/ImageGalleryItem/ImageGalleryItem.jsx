@@ -1,25 +1,20 @@
 import React from 'react';
-import { Component } from 'react';
 
 // Check types of props
 import PropTypes from 'prop-types';
 import { Image, ImageItem } from './ImageGalleryItem.styled';
 
-class ImageGalleryItem extends Component {
-  handleOnClickImgItem = () => {
-    const { largeImageURL, openModal, tags } = this.props;
+const ImageGalleryItem = ({ webformatURL, tags, largeImageURL, openModal }) => {
+  const handleOnClickImgItem = () => {
     openModal(largeImageURL, tags);
   };
 
-  render() {
-    const { webformatURL, tags } = this.props;
-    return (
-      <ImageItem onClick={this.handleOnClickImgItem}>
-        <Image src={webformatURL} alt={tags} />
-      </ImageItem>
-    );
-  }
-}
+  return (
+    <ImageItem onClick={handleOnClickImgItem}>
+      <Image src={webformatURL} alt={tags} />
+    </ImageItem>
+  );
+};
 
 export { ImageGalleryItem };
 

@@ -14,11 +14,8 @@ import {
 import { Container } from './App.styled';
 
 const App = () => {
-  const pixabay = new Pixabay();
-
   // Global states
   const [images, setImages] = useState([]);
-  const [hits, setHits] = useState(0);
   const [numPages, setNumPages] = useState(0);
   const [currentPage, setCurrPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
@@ -29,31 +26,27 @@ const App = () => {
 
   // On update component
   useEffect(() => {
+    const pixabay = new Pixabay();
+
+    // Get image by name, http req
+    async function getImages(searchValue = '', currentPage = 1) {
+      // Show loading spin
+      setLoadingStatus(true);
+
+      // Send req for images
+      await pixabay.fetchImagesByName(searchValue, currentPage);
+
+      setNumPages(pixabay.numPages);
+      setCurrPage(pixabay.currentPage);
+      setLoadingStatus(false);
+
+      setImages(prevImages => {
+        return [...prevImages, ...pixabay.images];
+      });
+    }
+
     getImages(searchValue, currentPage);
   }, [searchValue, currentPage]);
-
-  // On update search value
-  const updateSearchValue = newValue => {
-    setSearchValue(newValue);
-  };
-
-  // Get image by name, http req
-  const getImages = async (imageName = '', page = 1) => {
-    // Show loading spin
-    setLoadingStatus(true);
-
-    // Send req for images
-    await pixabay.fetchImagesByName(imageName, page);
-
-    setHits(pixabay.hits);
-    setNumPages(pixabay.numPages);
-    currentPage !== page && setCurrPage(pixabay.currentPage);
-    setLoadingStatus(false);
-
-    setImages(prevImages => {
-      return [...prevImages, ...pixabay.images];
-    });
-  };
 
   // Click on the next page
   const nextPage = () => {
