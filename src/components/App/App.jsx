@@ -1,5 +1,4 @@
-import React from 'react';
-import { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Pixabay API
 import { Pixabay } from 'utils/http/fetchImages';
@@ -14,119 +13,108 @@ import {
 
 import { Container } from './App.styled';
 
-class App extends Component {
-  static defaultContacts = [];
+const App = () => {
+  const pixabay = new Pixabay();
 
   // Global states
-  state = {
-    images: [],
-    hits: 0,
-    numPages: 0,
-    currentPage: 1,
-    searchValue: '',
-    isLoading: false,
-    modalImg: '',
-    tags: '',
-    isModalShow: false,
-  };
+  const [images, setImages] = useState([]);
+  const [hits, setHits] = useState(0);
+  const [numPages, setNumPages] = useState(0);
+  const [currentPage, setCurrPage] = useState(1);
+  const [searchValue, setSearchValue] = useState('');
+  const [isLoading, setLoadingStatus] = useState(false);
+  const [modalImg, setModalImg] = useState('');
+  const [tags, setTags] = useState('');
+  const [isModalShow, setShowModal] = useState(false);
 
   // On mount component
-  componentDidMount() {
+  useEffect(() => {
     try {
-      this.pixabay = new Pixabay();
-      this.getImages();
+      // getImages();
     } catch (error) {
       console.log(error);
     }
-  }
+  }, []);
 
   // On update component
-  componentDidUpdate(_, prevState) {
-    if (
-      prevState.searchValue !== this.state.searchValue ||
-      prevState.currentPage !== this.state.currentPage
-    ) {
-      this.getImages(this.state.searchValue, this.state.currentPage);
-    }
-  }
+  useEffect(() => {
+    // getImages(searchValue, currentPage);
+    console.log('upd');
+  }, [searchValue, currentPage]);
 
   // On update search value
-  updateSearchValue = newValue => {
-    this.setState({ searchValue: newValue });
+  const updateSearchValue = newValue => {
+    setSearchValue(newValue);
   };
 
   // Get image by name, http req
-  getImages = async (imageName, page) => {
+  const getImages = async (imageName = '', page = 1) => {
     // Show loading spin
-    this.setState({ isLoading: true });
+    // setLoadingStatus(true);
 
     // Send req for images
-    await this.pixabay.fetchImagesByName(imageName, page);
+    // await pixabay.fetchImagesByName(imageName, page);
 
-    this.setState({
-      hits: this.pixabay.hits,
-      numPages: this.pixabay.numPages,
-      currentPage: this.pixabay.currentPage,
-      isLoading: false,
-    });
+    // setHits(pixabay.hits);
+    // setNumPages(pixabay.numPages);
 
-    this.setState(prevState => {
-      return { images: [...prevState.images, ...this.pixabay.images] };
-    });
+    // console.log(currentPage);
+    // console.log(page);
+    // currentPage !== page && setCurrPage(pixabay.currentPage);
+
+    // setLoadingStatus(false);
+
+    // setImages(prevImages => {
+    //   return [...prevImages, ...pixabay.images];
+    // });
+    console.log('get');
   };
 
   // Click on the next page
-  nextPage = () => {
-    this.setState(prevState => {
-      return { ...prevState, currentPage: prevState.currentPage + 1 };
-    });
+  const nextPage = () => {
+    // this.setState(prevState => {
+    //   return { ...prevState, currentPage: prevState.currentPage + 1 };
+    // });
   };
 
   // On submit
-  handleOnSubmit = searchValue => {
-    console.log(this.state);
-    if (searchValue !== this.state.searchValue)
-      this.setState({
-        searchValue,
-        images: [],
-        currentPage: 1,
-        numPages: 1,
-      });
+  const handleOnSubmit = searchValue => {
+    // console.log(this.state);
+    // if (searchValue !== this.state.searchValue)
+    //   this.setState({
+    //     searchValue,
+    //     images: [],
+    //     currentPage: 1,
+    //     numPages: 1,
+    //   });
   };
 
   // Toggle for modal image
-  toogleModal = (modalImg, tags) => {
-    if (!modalImg) {
-      this.setState({ modalImg: '', isModalShow: false, tags: '' });
-      return;
-    }
-    this.setState({ modalImg, isModalShow: true, tags });
+  const toogleModal = (modalImg, tags) => {
+    // if (!modalImg) {
+    //   this.setState({ modalImg: '', isModalShow: false, tags: '' });
+    //   return;
+    // }
+    // this.setState({ modalImg, isModalShow: true, tags });
   };
 
-  render() {
-    const { numPages } = this.state;
-    return (
-      <Container>
-        <Searchbar onSubmit={this.handleOnSubmit} />
+  return (
+    <Container>
+      <Searchbar onSubmit={handleOnSubmit} />
 
-        {this.state.isLoading && <Loader />}
+      {isLoading && <Loader />}
 
-        <ImageGallery images={this.state.images} openModal={this.toogleModal} />
+      <ImageGallery images={images} openModal={toogleModal} />
 
-        {numPages > 1 && this.state.currentPage < numPages && (
-          <LoadMoreButton handleNextPage={this.nextPage} />
-        )}
+      {numPages > 1 && currentPage < numPages && (
+        <LoadMoreButton handleNextPage={nextPage} />
+      )}
 
-        {this.state.isModalShow && (
-          <Modal
-            modalImg={this.state.modalImg}
-            tags={this.state.tags}
-            closeModal={this.toogleModal}
-          />
-        )}
-      </Container>
-    );
-  }
-}
+      {isModalShow && (
+        <Modal modalImg={modalImg} tags={tags} closeModal={toogleModal} />
+      )}
+    </Container>
+  );
+};
 
 export { App };
